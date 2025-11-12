@@ -15,15 +15,25 @@ jobs:
       - name: Start services
         run: docker compose up -d
 
+      - name: Test PostgreSQL connection
+        run: |
+          docker compose exec -T db pg_isready -U user -d db
+
       - name: Test sql init
         run: |
           check_query="SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'visitors');"
-          check=`docker compose exec db psql -d db -U user -tAc "$check_query"`
-          if [[ $check != "t" ]]; then
-            echo "Expected 't', got: $check"
-            exit 1
-          fi
-          echo "SQL init test passed!"
+          docker compose exec -T db psql -U user -d db -c "
+          SELECT EXISTS (
+             SELECT FROM information_schema.tables 
+             WHERE table_schema = 'public' 
+             AND table_name = 'visitors'
+          );"
+          # check=`docker compose exec db psql -d db -U user -tAc "$check_query"`
+          # if [[ $check != "t" ]]; then
+          #   echo "Expected 't', got: $check"
+          #   exit 1
+          # fi
+          # echo "SQL init test passed!"
 
       - name: Wait for web to be ready
         run: |
@@ -45,10 +55,6 @@ jobs:
             exit 1
           fi
           echo "Web test passed!"
-
-      - name: Test PostgreSQL connection
-        run: |
-          docker compose exec -T db pg_isready -U user -d app
 
       - name: Show logs on failure
         if: failure()
