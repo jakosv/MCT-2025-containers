@@ -13,7 +13,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Start services
-        run: docker compose up -d
+        run: docker compose up -d --wait
+
+      - name: Test PostgreSQL connection
+        run: |
+          docker compose exec -T db pg_isready -U user -d app
+
+      - name: Test sql init
+        run: |
+          check_query="SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'visitors');"
+          check=`docker compose exec db psql -d app -U user -tAc "$check_query"`
+          if [[ $check != "t" ]]; then
+            echo "Expected 't', got: $check"
+            exit 1
+          fi
+          echo "SQL init test passed!"
 
       - name: Wait for web to be ready
         run: |
@@ -35,10 +49,6 @@ jobs:
             exit 1
           fi
           echo "Web test passed!"
-
-      - name: Test PostgreSQL connection
-        run: |
-          docker compose exec -T db pg_isready -U user -d app
 
       - name: Show logs on failure
         if: failure()

@@ -44,29 +44,9 @@ RUN apt-get update && apt-get install -y \
     libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
-    # libboost-system1.74.0 \
-    # libboost-coroutine1.74.0 \
-    # libboost-context1.74.0 \
-    # libssl3 \
-    # libpq5 \
-    # libpq-dev \
-    # && apt-get clean \
-    # && rm -rf /var/lib/apt/lists/*
-
-#RUN apt-get update && \
-#    apt-get install -y \
-#    libpq5 \
-#    && rm -rf /var/lib/apt/lists/*
-#    libboost-system1.74 \
-#    libboost-coroutine1.74 \
-#    libboost-context1.74 \
-#    libssl3 \
-#    && rm -rf /var/lib/apt/lists/*
-
 # Copy applictaion build from builder stage
 COPY --from=builder /usr/local/lib/librestbed.* /usr/local/lib/
 COPY --from=builder /app/build/restbed-app /usr/local/bin/
-#COPY --from=builder /app/static /app/static
 
 # Update libraries
 RUN ldconfig
@@ -75,9 +55,6 @@ RUN ldconfig
 RUN useradd -m appuser
 USER appuser
 WORKDIR /home/appuser
-
-# Open application port
-# EXPOSE 1984
 
 # Run application
 CMD ["/usr/local/bin/restbed-app"]
