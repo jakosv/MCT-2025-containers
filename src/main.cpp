@@ -4,6 +4,7 @@
 #include <streambuf>
 #include <set>
 #include <iostream>
+#include <cstdlib>
 #include <libpq-fe.h>
 
 using namespace std;
@@ -65,7 +66,12 @@ void ping_handler(const shared_ptr<Session> session)
 
 void visits_handler(const shared_ptr<Session> session)
 {
-    const string body = to_string(visits);
+    string body = to_string(visits);
+
+    if (getenv("DEV") != nullptr) {
+        body = to_string(-1);
+    }
+
     const multimap<string, string> headers {
         { "Content-Type", "text/html" },
         { "Content-Length", ::to_string(body.length()) }

@@ -18,7 +18,7 @@ RUN git clone https://github.com/corvusoft/restbed.git \
     cd restbed && \
     mkdir build && cd build && \
     cmake -DUSE_BOOST_ASIO=ON -DBUILD_SSL=OFF -DBUILD_TESTS=OFF \
-         -DCMAKE_CXX_FLAGS="-Wno-narrowing" .. && \
+          -DCMAKE_CXX_FLAGS="-Wno-narrowing" .. && \
     make && make install
 
 # Copy restbed libraries and includes
