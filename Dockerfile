@@ -1,5 +1,8 @@
 FROM ubuntu:22.04 as builder
 
+ARG DEV
+ENV DEV $DEV
+
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y \

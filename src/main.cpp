@@ -68,9 +68,9 @@ void visits_handler(const shared_ptr<Session> session)
 {
     string body = to_string(visits);
 
-    if (getenv("DEV") != nullptr) {
+#ifdef DEV
         body = to_string(-1);
-    }
+#endif
 
     const multimap<string, string> headers {
         { "Content-Type", "text/html" },

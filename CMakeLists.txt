@@ -31,6 +31,10 @@ find_library(BOOST_SYSTEM_LIB NAMES boost_system)
 
 include_directories(${PQ_INCLUDE_DIR})
 
+if(DEFINED ENV{DEV})
+    add_definitions(-DDEV)
+endif()
+
 add_executable(restbed-app src/main.cpp)
 
 target_link_libraries(restbed-app 
@@ -44,3 +48,4 @@ target_link_libraries(restbed-app
     pthread
     dl
 )
+
